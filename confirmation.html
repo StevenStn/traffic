@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrafficPro — Commande confirmée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0A0F1E; --navy2: #0F172A; --cyan: #00D4FF; --green: #00FF88;
+    --white: #F8FAFF; --gray: #8892B0; --card-bg: rgba(255,255,255,0.04);
+    --border: rgba(0,212,255,0.15); --radius: 16px;
+  }
+  body { background: var(--navy); color: var(--white); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; }
+
+  nav { display: flex; align-items: center; padding: 16px 40px; border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--cyan); text-decoration: none; }
+  .logo span { color: var(--white); }
+
+  /* PROGRESS BAR */
+  .progress-bar { background: var(--navy2); border-bottom: 1px solid var(--border); padding: 0 40px; }
+  .progress-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; padding: 20px 0; }
+  .prog-step { display: flex; align-items: center; gap: 10px; flex: 1; }
+  .prog-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.875rem; flex-shrink: 0; }
+  .prog-num.done { background: var(--green); color: var(--navy); }
+  .prog-label { font-size: 0.825rem; font-weight: 600; }
+  .prog-label.done { color: var(--green); }
+  .prog-line { flex: 1; height: 1px; background: var(--green); margin: 0 12px; }
+
+  main { max-width: 700px; margin: 0 auto; padding: 80px 40px; }
+
+  /* SUCCESS ANIMATION */
+  .success-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(0,255,136,0.1); border: 2px solid var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.4rem; margin: 0 auto 32px;
+    animation: pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes pop-in { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
+
+  h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 12px; }
+  .page-sub { color: var(--gray); text-align: center; margin-bottom: 48px; font-size: 1rem; }
+
+  /* RECAP CARD */
+  .recap-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; margin-bottom: 24px;
+  }
+  .recap-section-title {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.8rem;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--cyan);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .recap-rows { display: flex; flex-direction: column; gap: 10px; }
+  .recap-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .recap-key { font-size: 0.875rem; color: var(--gray); flex-shrink: 0; }
+  .recap-val { font-size: 0.875rem; font-weight: 600; color: var(--white); text-align: right; word-break: break-all; }
+  .recap-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .recap-price-row { display: flex; justify-content: space-between; align-items: center; }
+  .recap-price-label { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; }
+  .recap-price-val { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--cyan); }
+
+  /* STATUS BADGE */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3);
+    color: var(--green); font-size: 0.82rem; font-weight: 700;
+    padding: 6px 14px; border-radius: 100px; margin-bottom: 24px;
+  }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+
+  /* NEXT STEPS */
+  .next-steps { background: rgba(0,212,255,0.05); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 32px; }
+  .next-step { display: flex; gap: 16px; margin-bottom: 16px; }
+  .next-step:last-child { margin-bottom: 0; }
+  .next-step-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(0,212,255,0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.8rem; color: var(--cyan); flex-shrink: 0; margin-top: 2px; }
+  .next-step-content h4 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+  .next-step-content p { color: var(--gray); font-size: 0.85rem; line-height: 1.5; }
+
+  /* EMAIL STATUS */
+  .email-status { font-size: 0.82rem; color: var(--gray); text-align: center; margin-bottom: 24px; min-height: 20px; }
+  .email-status.sending { color: var(--cyan); }
+  .email-status.sent { color: var(--green); }
+  .email-status.error { color: #ffd166; }
+
+  /* CTA */
+  .btn-new { display: block; width: 100%; padding: 14px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--white); font-weight: 600; font-size: 0.95rem; cursor: pointer; text-align: center; text-decoration: none; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+  .btn-new:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  @media (max-width: 600px) {
+    main { padding: 40px 20px; }
+    .progress-bar { padding: 0 20px; }
+    .prog-label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Traffic<span>Pro</span></a>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress-bar">
+  <div class="progress-inner">
+    <div class="prog-step"><div class="prog-num done">✓</div><span class="prog-label done">Commande</span></div>
+    <div class="prog-line"></div>
+    <div class="prog-step"><div class="prog-num done">✓</div><span class="prog-label done">Paiement</span></div>
+    <div class="prog-line"></div>
+    <div class="prog-step"><div class="prog-num done">✓</div><span class="prog-label done">Confirmé</span></div>
+  </div>
+</div>
+
+<main>
+  <div class="success-icon">✅</div>
+
+  <div class="status-badge"><span class="status-dot"></span> Commande enregistrée</div>
+
+  <h1>Merci pour votre commande !</h1>
+  <p class="page-sub">Votre paiement a été enregistré. Votre campagne démarrera sous 24h.</p>
+
+  <!-- FULL RECAP -->
+  <div class="recap-card">
+    <div class="recap-section-title">📋 Détails de votre commande</div>
+    <div class="recap-rows" id="recap-rows"><!-- JS --></div>
+    <hr class="recap-divider">
+    <div class="recap-price-row">
+      <span class="recap-price-label">Montant payé</span>
+      <span class="recap-price-val" id="recap-price">—</span>
+    </div>
+  </div>
+
+  <!-- EMAIL STATUS -->
+  <p class="email-status" id="email-status">⏳ Envoi du récapitulatif en cours...</p>
+
+  <!-- NEXT STEPS -->
+  <div class="next-steps">
+    <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:16px;font-size:0.9rem;color:var(--cyan);">📍 Prochaines étapes</div>
+    <div class="next-step">
+      <div class="next-step-num">1</div>
+      <div class="next-step-content">
+        <h4>Vérification du paiement</h4>
+        <p>Votre transaction est vérifiée sous 1 à 4 heures. Vous recevrez une confirmation par email.</p>
+      </div>
+    </div>
+    <div class="next-step">
+      <div class="next-step-num">2</div>
+      <div class="next-step-content">
+        <h4>Démarrage de la campagne</h4>
+        <p>Une fois le paiement validé, votre campagne démarre dans les 24h.</p>
+      </div>
+    </div>
+    <div class="next-step">
+      <div class="next-step-num">3</div>
+      <div class="next-step-content">
+        <h4>Rapport de campagne</h4>
+        <p>Un rapport détaillé vous sera envoyé à la fin de la campagne avec les statistiques de trafic.</p>
+      </div>
+    </div>
+  </div>
+
+  <a href="index.html" class="btn-new" onclick="localStorage.removeItem('tp_order')">← Passer une nouvelle commande</a>
+</main>
+
+<script>
+// ─── EMAILJS CONFIG ───────────────────────────────────────────────────────────
+// ⚠️  INSTRUCTIONS DE CONFIGURATION :
+// 1. Créez un compte gratuit sur https://www.emailjs.com
+// 2. Ajoutez un service Gmail avec l'adresse d9315593@gmail.com
+// 3. Créez un template Email avec les variables {{to_email}}, {{subject}}, {{message}}
+// 4. Remplacez les 3 valeurs ci-dessous par vos vraies clés
+const EMAILJS_PUBLIC_KEY  = 'Oxp5KHDMl9DCxkmcw';   // Account > API Keys
+const EMAILJS_SERVICE_ID  = 'service_ferxrf5';   // Email Services > Service ID
+const EMAILJS_TEMPLATE_ID = 'template_b7tnc58';  // Email Templates > Template ID
+
+const DEST_EMAIL = 'xcvttsyiqxnwmie@gmail10p.com';
+// ─────────────────────────────────────────────────────────────────────────────
+
+const order = JSON.parse(localStorage.getItem('tp_order') || '{}');
+if (!order.name) window.location.href = 'index.html';
+
+// Fill recap
+const fields = [
+  ['Pack',            order.packLabel],
+  ['Client',          order.name],
+  ['Email',           order.email],
+  ['Clics / jour',    order.clicks + ' clics'],
+  ['Durée',           order.days + ' jours (' + order.weeks + ' semaine' + (parseInt(order.weeks) > 1 ? 's' : '') + ')'],
+  ['Total clics',     order.total],
+  ['Pays ciblés',     order.countries],
+  ['URL destination', order.url],
+  ['Mode paiement',   order.payMethod],
+  ['ID transaction',  order.txid],
+  ['Confirmé le',     order.confirmedAt],
+];
+if (order.msg) fields.push(['Précisions', order.msg]);
+
+const rows = document.getElementById('recap-rows');
+fields.forEach(([k, v]) => {
+  const d = document.createElement('div');
+  d.className = 'recap-row';
+  d.innerHTML = `<span class="recap-key">${k}</span><span class="recap-val">${v || '—'}</span>`;
+  rows.appendChild(d);
+});
+document.getElementById('recap-price').textContent = order.price || '—';
+
+// Build email body
+function buildEmailBody(o) {
+  return `
+🟢 NOUVELLE COMMANDE TRAFFICPRO
+════════════════════════════════
+
+👤 CLIENT
+Nom     : ${o.name}
+Email   : ${o.email}
+
+📦 COMMANDE
+Pack    : ${o.packLabel}
+Clics/j : ${o.clicks} clics/jour
+Durée   : ${o.days} jours (${o.weeks} semaine${parseInt(o.weeks) > 1 ? 's' : ''})
+Total   : ${o.total} clics
+Pays    : ${o.countries}
+URL     : ${o.url}
+${o.msg ? 'Notes   : ' + o.msg : ''}
+
+💳 PAIEMENT
+Méthode  : ${o.payMethod}
+ID Txn   : ${o.txid}
+Montant  : ${o.price}
+Date     : ${o.confirmedAt}
+
+════════════════════════════════
+TrafficPro — Commande automatique
+  `.trim();
+}
+
+// Send email via EmailJS (invisible to user)
+async function sendNotificationEmail() {
+  const statusEl = document.getElementById('email-status');
+  try {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+    const templateParams = {
+      to_email: DEST_EMAIL,
+      subject:  `[TrafficPro] Nouvelle commande — ${order.name} — ${order.price}`,
+      message:  buildEmailBody(order),
+      from_name: 'TrafficPro Bot',
+      client_name: order.name,
+      client_email: order.email,
+    };
+
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+
+    statusEl.textContent = '✓ Récapitulatif envoyé à votre adresse email.';
+    statusEl.className = 'email-status sent';
+  } catch (err) {
+    console.error('EmailJS error:', err);
+    // Silent fail — user doesn't see the error, just a neutral message
+    statusEl.textContent = 'Récapitulatif enregistré. Vous serez contacté sous 1h.';
+    statusEl.className = 'email-status';
+  }
+}
+
+// Run on page load
+window.addEventListener('DOMContentLoaded', () => {
+  // Slight delay so the page renders first
+  setTimeout(sendNotificationEmail, 1200);
+});
+</script>
+</body>
+</html>

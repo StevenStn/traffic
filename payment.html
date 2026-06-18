@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrafficPro — Paiement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0A0F1E; --navy2: #0F172A; --cyan: #00D4FF; --green: #00FF88;
+    --white: #F8FAFF; --gray: #8892B0; --card-bg: rgba(255,255,255,0.04);
+    --border: rgba(0,212,255,0.15); --radius: 16px;
+  }
+  body { background: var(--navy); color: var(--white); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    background: var(--navy2); border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+  }
+  .progress-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; padding: 20px 0; gap: 0; }
+  .prog-step { display: flex; align-items: center; gap: 10px; flex: 1; }
+  .prog-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.875rem; flex-shrink: 0; }
+  .prog-num.done { background: var(--green); color: var(--navy); }
+  .prog-num.active { background: var(--cyan); color: var(--navy); }
+  .prog-num.todo { background: rgba(255,255,255,0.08); color: var(--gray); }
+  .prog-label { font-size: 0.825rem; font-weight: 600; }
+  .prog-label.done { color: var(--green); }
+  .prog-label.active { color: var(--cyan); }
+  .prog-label.todo { color: var(--gray); }
+  .prog-line { flex: 1; height: 1px; background: var(--border); margin: 0 12px; }
+  .prog-line.done { background: var(--green); }
+
+  /* LAYOUT */
+  nav { display: flex; align-items: center; padding: 16px 40px; border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--cyan); text-decoration: none; }
+  .logo span { color: var(--white); }
+  .back-link { margin-left: auto; color: var(--gray); text-decoration: none; font-size: 0.875rem; display: flex; align-items: center; gap: 6px; }
+  .back-link:hover { color: var(--cyan); }
+
+  main { max-width: 800px; margin: 0 auto; padding: 60px 40px; }
+  h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+  .page-sub { color: var(--gray); margin-bottom: 40px; }
+
+  /* ORDER RECAP */
+  .recap-box {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px; margin-bottom: 32px;
+  }
+  .recap-title { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--cyan); margin-bottom: 16px; }
+  .recap-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 32px; }
+  .recap-item { display: flex; flex-direction: column; gap: 2px; }
+  .recap-key { font-size: 0.78rem; color: var(--gray); font-weight: 500; }
+  .recap-val { font-size: 0.95rem; font-weight: 600; color: var(--white); }
+  .recap-price { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--cyan); }
+
+  /* PAYMENT METHODS */
+  .pay-tabs { display: flex; gap: 12px; margin-bottom: 24px; }
+  .pay-tab {
+    flex: 1; padding: 14px; border-radius: 12px; cursor: pointer;
+    border: 2px solid var(--border); background: var(--card-bg);
+    display: flex; align-items: center; gap: 12px;
+    transition: all 0.2s; text-align: left;
+    font-family: 'Inter', sans-serif; color: var(--white);
+  }
+  .pay-tab.active { border-color: var(--cyan); background: rgba(0,212,255,0.08); }
+  .pay-tab-icon { font-size: 1.6rem; flex-shrink: 0; }
+  .pay-tab-label { font-weight: 700; font-size: 0.95rem; display: block; }
+  .pay-tab-sub { font-size: 0.78rem; color: var(--gray); display: block; margin-top: 2px; }
+
+  .pay-panel { display: none; }
+  .pay-panel.active { display: block; }
+
+  .pay-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+  .pay-instruction { color: var(--gray); font-size: 0.9rem; line-height: 1.7; margin-bottom: 24px; }
+  .pay-address-label { font-size: 0.78rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .pay-address-box {
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 10px; padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .pay-address { font-size: 0.9rem; color: var(--cyan); word-break: break-all; font-family: monospace; }
+  .copy-btn { background: rgba(0,212,255,0.15); border: none; color: var(--cyan); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; white-space: nowrap; transition: background 0.2s; font-weight: 600; font-family: 'Inter', sans-serif; }
+  .copy-btn:hover { background: rgba(0,212,255,0.3); }
+  .pay-warning { background: rgba(255,200,0,0.06); border: 1px solid rgba(255,200,0,0.2); border-radius: 8px; padding: 12px 16px; font-size: 0.82rem; color: #ffd166; margin-bottom: 20px; }
+  .pay-warning::before { content: '⚠️ '; }
+
+  .txid-group { margin-bottom: 20px; }
+  label { font-size: 0.875rem; font-weight: 600; color: var(--gray); margin-bottom: 6px; display: block; }
+  input[type=text] { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--white); font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+  input:focus { border-color: var(--cyan); }
+
+  .confirm-btn { width: 100%; padding: 16px; background: var(--cyan); color: var(--navy); border: none; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .confirm-btn:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(0,212,255,0.3); }
+  .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 32px; right: 32px; z-index: 9999; background: var(--navy2); border: 1px solid var(--green); padding: 14px 24px; border-radius: 12px; color: var(--green); font-weight: 600; font-size: 0.9rem; transform: translateY(100px); opacity: 0; transition: all 0.3s; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 600px) {
+    main { padding: 40px 20px; }
+    .recap-grid { grid-template-columns: 1fr; }
+    .pay-tabs { flex-direction: column; }
+    .progress-bar { padding: 0 20px; }
+    .prog-label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Traffic<span>Pro</span></a>
+  <a href="index.html" class="back-link">← Modifier ma commande</a>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress-bar">
+  <div class="progress-inner">
+    <div class="prog-step"><div class="prog-num done">✓</div><span class="prog-label done">Commande</span></div>
+    <div class="prog-line done"></div>
+    <div class="prog-step"><div class="prog-num active">2</div><span class="prog-label active">Paiement</span></div>
+    <div class="prog-line"></div>
+    <div class="prog-step"><div class="prog-num todo">3</div><span class="prog-label todo">Confirmation</span></div>
+  </div>
+</div>
+
+<main>
+  <h1>Finalisez votre paiement</h1>
+  <p class="page-sub">Votre commande est prête. Choisissez votre méthode de paiement et confirmez.</p>
+
+  <!-- RECAP -->
+  <div class="recap-box">
+    <div class="recap-title">📋 Récapitulatif de commande</div>
+    <div class="recap-grid" id="recap-grid">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- PAYMENT TABS -->
+  <div class="pay-tabs">
+    <button class="pay-tab active" onclick="switchTab('usdt', this)">
+      <span class="pay-tab-icon">₮</span>
+      <span><span class="pay-tab-label">USDT — TRC-20</span><span class="pay-tab-sub">Crypto · Réseau TRON</span></span>
+    </button>
+    <button class="pay-tab" onclick="switchTab('mtn', this)">
+      <span class="pay-tab-icon">📱</span>
+      <span><span class="pay-tab-label">MTN Mobile Money</span><span class="pay-tab-sub">Paiement en FCFA</span></span>
+    </button>
+  </div>
+
+  <!-- USDT PANEL -->
+  <div class="pay-panel active" id="panel-usdt">
+    <div class="pay-card">
+      <p class="pay-instruction">
+        Envoyez exactement le montant indiqué en USDT sur l'adresse TRC-20 ci-dessous. 
+        Utilisez uniquement le réseau <strong style="color:var(--white)">TRON (TRC-20)</strong> — tout envoi sur un autre réseau sera perdu.
+      </p>
+      <div class="pay-address-label">Adresse USDT TRC-20</div>
+      <div class="pay-address-box">
+        <span class="pay-address" id="usdt-addr">TVbXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+        <button class="copy-btn" onclick="copyText('usdt-addr')">Copier</button>
+      </div>
+      <div class="pay-warning">Réseau TRC-20 uniquement. Vérifiez deux fois avant d'envoyer.</div>
+      <div class="txid-group">
+        <label>Hash de transaction (après paiement) *</label>
+        <input type="text" id="usdt-txid" placeholder="0x... ou identifiant de la transaction">
+      </div>
+      <button class="confirm-btn" onclick="confirmPayment('usdt')" id="btn-usdt">
+        J'ai effectué le paiement — Confirmer →
+      </button>
+    </div>
+  </div>
+
+  <!-- MTN PANEL -->
+  <div class="pay-panel" id="panel-mtn">
+    <div class="pay-card">
+      <p class="pay-instruction">
+        Effectuez un transfert MTN Mobile Money vers le numéro ci-dessous. 
+        Entrez le montant exact en FCFA indiqué dans votre récapitulatif.
+      </p>
+      <div class="pay-address-label">Numéro MTN MoMo</div>
+      <div class="pay-address-box">
+        <span class="pay-address" id="mtn-num">+229 XXXXXXXXXX</span>
+        <button class="copy-btn" onclick="copyText('mtn-num')">Copier</button>
+      </div>
+      <div class="pay-warning">Entrez le montant exact. Conservez votre ID de transaction MoMo.</div>
+      <div class="txid-group">
+        <label>ID de transaction MoMo (après paiement) *</label>
+        <input type="text" id="mtn-txid" placeholder="Ex: MP250618.1234.R12345">
+      </div>
+      <button class="confirm-btn" onclick="confirmPayment('mtn')" id="btn-mtn">
+        J'ai effectué le paiement — Confirmer →
+      </button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast">✓ Copié</div>
+
+<script>
+// Load order
+const order = JSON.parse(localStorage.getItem('tp_order') || '{}');
+if (!order.name) window.location.href = 'index.html';
+
+// Fill recap
+const recapFields = [
+  ['Pack',        order.packLabel],
+  ['Clics / jour',order.clicks + ' clics'],
+  ['Durée',       order.days + ' jours (' + order.weeks + ' sem.)'],
+  ['Total clics', order.total],
+  ['Pays cibles', order.countries],
+  ['URL',         order.url],
+  ['Client',      order.name + ' · ' + order.email],
+  ['Montant dû',  order.price],
+];
+const grid = document.getElementById('recap-grid');
+recapFields.forEach(([k, v]) => {
+  const div = document.createElement('div');
+  div.className = 'recap-item';
+  div.innerHTML = `<span class="recap-key">${k}</span><span class="recap-val ${k === 'Montant dû' ? 'recap-price' : ''}">${v || '—'}</span>`;
+  grid.appendChild(div);
+});
+
+// Tabs
+function switchTab(name, el) {
+  document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pay-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+// Copy
+function copyText(id) {
+  const txt = document.getElementById(id).textContent.trim();
+  navigator.clipboard.writeText(txt).then(() => {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  });
+}
+
+// Confirm payment → go to confirmation
+function confirmPayment(method) {
+  const txidEl = document.getElementById(method === 'usdt' ? 'usdt-txid' : 'mtn-txid');
+  const txid = txidEl.value.trim();
+  if (!txid) { txidEl.style.borderColor = '#ff4d6d'; txidEl.focus(); return; }
+
+  // Save transaction info
+  order.payMethod = method === 'usdt' ? 'USDT TRC-20' : 'MTN Mobile Money';
+  order.txid = txid;
+  order.confirmedAt = new Date().toLocaleString('fr-FR');
+  localStorage.setItem('tp_order', JSON.stringify(order));
+
+  const btn = document.getElementById('btn-' + method);
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement...';
+
+  // Small delay for UX then redirect
+  setTimeout(() => { window.location.href = 'confirmation.html'; }, 800);
+}
+</script>
+</body>
+</html>
