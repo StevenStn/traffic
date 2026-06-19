@@ -84,6 +84,7 @@
   .pack-name { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
   .pack-price { font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 800; margin-bottom: 4px; }
   .pack-price span { font-size: 1.1rem; font-weight: 400; color: var(--gray); vertical-align: super; }
+  .pack-usdt-equiv { font-size: 1.05rem; color: var(--green); font-weight: 600; margin-bottom: 12px; display: block; }
   .pack-unit { color: var(--gray); font-size: 0.875rem; margin-bottom: 20px; }
   .pack-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 24px; }
   .pack-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
@@ -117,11 +118,18 @@
   /* ESTIMATE */
   .estimate-box { background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(0,255,136,0.05)); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; position: sticky; top: 100px; }
   .estimate-label { font-size: 0.8rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
-  .estimate-price { font-family: 'Space Grotesk', sans-serif; font-size: 3rem; font-weight: 800; color: var(--cyan); margin-bottom: 20px; }
+  .estimate-price { font-family: 'Space Grotesk', sans-serif; font-size: 3rem; font-weight: 800; color: var(--cyan); margin-bottom: 2px; }
+  .estimate-usdt { font-size: 1.3rem; color: var(--green); font-weight: 700; margin-bottom: 20px; }
   .estimate-breakdown { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
   .estimate-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; color: var(--gray); }
   .estimate-row strong { color: var(--white); }
   .estimate-divider { border: none; border-top: 1px solid var(--border); }
+  
+  /* BINANCE PAY TIP */
+  .binance-tip { background: rgba(243, 186, 47, 0.08); border: 1px solid rgba(243, 186, 47, 0.25); border-radius: 10px; padding: 14px; margin-bottom: 20px; font-size: 0.82rem; line-height: 1.5; color: #f3ba2f; }
+  .binance-tip strong { color: #fff; }
+  .binance-tip ul { margin-top: 6px; padding-left: 16px; }
+
   .submit-btn { width: 100%; padding: 16px; background: var(--cyan); color: var(--navy); border: none; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .submit-btn:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(0,212,255,0.3); }
 
@@ -234,7 +242,7 @@
     <div class="steps">
       <div class="step"><div class="step-num">1</div><h3>Choisissez votre pack</h3><p>Sélectionnez un pack prédéfini ou configurez une commande sur mesure avec vos pays cibles.</p></div>
       <div class="step"><div class="step-num">2</div><h3>Envoyez votre lien</h3><p>Partagez l'URL vers laquelle diriger le trafic via le formulaire de commande.</p></div>
-      <div class="step"><div class="step-num">3</div><h3>Payez en toute sécurité</h3><p>USDT (crypto) ou MTN Mobile Money en FCFA — aucun frais API, aucun intermédiaire.</p></div>
+      <div class="step"><div class="step-num">3</div><h3>Payez en toute sécurité</h3><p>USDT via Binance (Pay ou transfert Réseau), aucun intermédiaire.</p></div>
       <div class="step"><div class="step-num">4</div><h3>Recevez votre trafic</h3><p>Le trafic démarre sous 24h. Un rapport de suivi vous est envoyé à la fin de la campagne.</p></div>
     </div>
   </div>
@@ -252,6 +260,7 @@
       <div class="pack-card">
         <div class="pack-name">Pack Découverte</div>
         <div class="pack-price"><span>FCFA</span> 5 000</div>
+        <span class="pack-usdt-equiv">≈ 8.35 USDT</span>
         <div class="pack-unit">50 clics / jour · 7 jours</div>
         <hr class="pack-divider">
         <ul class="pack-features">
@@ -268,6 +277,7 @@
       <div class="pack-card featured">
         <div class="pack-name">Pack Croissance</div>
         <div class="pack-price"><span>FCFA</span> 5 000</div>
+        <span class="pack-usdt-equiv">≈ 8.35 USDT</span>
         <div class="pack-unit">40 clics / jour · 14 jours</div>
         <hr class="pack-divider">
         <ul class="pack-features">
@@ -285,6 +295,7 @@
       <div class="pack-card">
         <div class="pack-name">Pack VIP</div>
         <div class="pack-price"><span>FCFA</span> 45 000</div>
+        <span class="pack-usdt-equiv">≈ 75.00 USDT</span>
         <div class="pack-unit">400 clics / jour · 7 jours</div>
         <hr class="pack-divider">
         <ul class="pack-features">
@@ -316,9 +327,9 @@
           <label>Pack de départ</label>
           <select id="pack-select" onchange="onPackChange()">
             <option value="custom">— Commande personnalisée —</option>
-            <option value="decouverte">Pack Découverte — 5 000 FCFA (50 clics/j · 7 jours)</option>
-            <option value="croissance">Pack Croissance — 5 000 FCFA (40 clics/j · 14 jours)</option>
-            <option value="vip">Pack VIP — 45 000 FCFA (400 clics/j · 7 jours)</option>
+            <option value="decouverte">Pack Découverte — 5 000 FCFA / 8.35 USDT (50 clics/j · 7 jours)</option>
+            <option value="croissance">Pack Croissance — 5 000 FCFA / 8.35 USDT (40 clics/j · 14 jours)</option>
+            <option value="vip">Pack VIP — 45 000 FCFA / 75.00 USDT (400 clics/j · 7 jours)</option>
           </select>
         </div>
 
@@ -371,8 +382,7 @@
         <div class="form-group">
           <label>Mode de paiement préféré</label>
           <select id="payment-method">
-            <option value="usdt">USDT (Crypto TRC-20)</option>
-            <option value="mtn">MTN Mobile Money (FCFA)</option>
+            <option value="usdt">USDT via Binance (Crypto)</option>
           </select>
         </div>
 
@@ -388,6 +398,7 @@
         <div class="estimate-box">
           <div class="estimate-label">Estimation totale</div>
           <div class="estimate-price" id="price-fcfa">5 000 FCFA</div>
+          <div class="estimate-usdt" id="price-usdt">≈ 8.35 USDT</div>
           <hr class="estimate-divider" style="margin-bottom:16px;">
           <div class="estimate-breakdown">
             <div class="estimate-row"><span>Clics / jour</span><strong id="est-clicks">50</strong></div>
@@ -395,7 +406,18 @@
             <div class="estimate-row"><span>Total clics</span><strong id="est-total">350</strong></div>
             <div class="estimate-row"><span>Pays ciblés</span><strong id="est-countries">🇺🇸 USA</strong></div>
           </div>
-          <hr class="estimate-divider" style="margin-bottom:20px;">
+          <hr class="estimate-divider" style="margin-bottom:15px;">
+          
+          <!-- BINANCE PAY PROCEDURE TIP -->
+          <div class="binance-tip">
+            <strong>💡 Procédure de paiement Binance :</strong>
+            <ul>
+              <li>Sur la page suivante, l'adresse de notre wallet Binance s'affichera.</li>
+              <li>Vous pourrez payer directement via <strong>Binance Pay</strong> (sans frais) ou via transfert classique <strong>USDT (Réseau TRC20 / BSC)</strong>.</li>
+              <li>Veillez à envoyer le montant exact en USDT pour une activation automatique sous 24h.</li>
+            </ul>
+          </div>
+
           <div style="font-size:0.82rem;color:var(--gray);line-height:1.6;margin-bottom:20px;">
             💡 Trafic <strong style="color:var(--white)">humain réel et ciblé</strong>. Chaque visiteur est sélectionné parmi des clients potentiels qualifiés, pas des bots.
           </div>
@@ -429,6 +451,9 @@ const PACK_DATA = {
   vip:         { fcfa: 45000, clicks: 400, weeks: 1,  maxCountries: 99 },
 };
 
+// Taux de conversion simulé : 1 USDT = 600 FCFA
+const FCFA_TO_USDT_RATE = 600;
+
 // Price formula for custom: 5000 FCFA per 50 clics per week (base rate)
 // Rate: 5000 FCFA = 50 clics × 7 jours → per click-day = 5000/350 ≈ 14.28 FCFA
 const RATE_PER_CLICK_DAY = 5000 / 350; // ≈ 14.28 FCFA per click per day
@@ -437,6 +462,7 @@ let currentMaxCountries = 3; // default pack decouverte limit
 let selectedPack = 'custom';
 
 function fmtFCFA(n) { return n.toLocaleString('fr-FR') + ' FCFA'; }
+function fmtUSDT(n) { return '≈ ' + (n / FCFA_TO_USDT_RATE).toFixed(2) + ' USDT'; }
 
 function getSelectedCountries() {
   return [...document.querySelectorAll('#country-chips .chip.active')].map(c => c.textContent.trim());
@@ -505,6 +531,7 @@ function updateEstimate() {
   }
 
   document.getElementById('price-fcfa').textContent = fmtFCFA(price);
+  document.getElementById('price-usdt').textContent = fmtUSDT(price);
   document.getElementById('est-clicks').textContent = clicks;
   document.getElementById('est-days').textContent = days + ' jours (' + weeks + ' semaine' + (weeks > 1 ? 's' : '') + ')';
   document.getElementById('est-total').textContent = (clicks * days).toLocaleString('fr-FR');
@@ -570,10 +597,11 @@ function goToPayment() {
   const sel     = document.getElementById('pack-select').value;
   const countries = getSelectedCountries().join(', ');
   const priceTxt  = document.getElementById('price-fcfa').textContent;
+  const usdtTxt   = document.getElementById('price-usdt').textContent;
   const total     = (parseInt(clicks) * days).toLocaleString('fr-FR');
   const packLabel = sel === 'custom' ? 'Personnalisé' : ({decouverte:'Pack Découverte',croissance:'Pack Croissance',vip:'Pack VIP'}[sel]);
 
-  const order = { packLabel, clicks, weeks, days, total, countries, url, name, email, pay, msg, price: priceTxt };
+  const order = { packLabel, clicks, weeks, days, total, countries, url, name, email, pay, msg, price: priceTxt, usdtPrice: usdtTxt };
   localStorage.setItem('tp_order', JSON.stringify(order));
   window.location.href = 'payment.html';
 }

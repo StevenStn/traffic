@@ -146,10 +146,6 @@
       <span class="pay-tab-icon">₮</span>
       <span><span class="pay-tab-label">USDT — TRC-20</span><span class="pay-tab-sub">Crypto · Réseau TRON</span></span>
     </button>
-    <button class="pay-tab" onclick="switchTab('mtn', this)">
-      <span class="pay-tab-icon">📱</span>
-      <span><span class="pay-tab-label">MTN Mobile Money</span><span class="pay-tab-sub">Paiement en FCFA</span></span>
-    </button>
   </div>
 
   <!-- USDT PANEL -->
@@ -170,29 +166,6 @@
         <input type="text" id="usdt-txid" placeholder="0x... ou identifiant de la transaction">
       </div>
       <button class="confirm-btn" onclick="confirmPayment('usdt')" id="btn-usdt">
-        J'ai effectué le paiement — Confirmer →
-      </button>
-    </div>
-  </div>
-
-  <!-- MTN PANEL -->
-  <div class="pay-panel" id="panel-mtn">
-    <div class="pay-card">
-      <p class="pay-instruction">
-        Effectuez un transfert MTN Mobile Money vers le numéro ci-dessous. 
-        Entrez le montant exact en FCFA indiqué dans votre récapitulatif.
-      </p>
-      <div class="pay-address-label">Numéro MTN MoMo</div>
-      <div class="pay-address-box">
-        <span class="pay-address" id="mtn-num">+229 XXXXXXXXXX</span>
-        <button class="copy-btn" onclick="copyText('mtn-num')">Copier</button>
-      </div>
-      <div class="pay-warning">Entrez le montant exact. Conservez votre ID de transaction MoMo.</div>
-      <div class="txid-group">
-        <label>ID de transaction MoMo (après paiement) *</label>
-        <input type="text" id="mtn-txid" placeholder="Ex: MP250618.1234.R12345">
-      </div>
-      <button class="confirm-btn" onclick="confirmPayment('mtn')" id="btn-mtn">
         J'ai effectué le paiement — Confirmer →
       </button>
     </div>
